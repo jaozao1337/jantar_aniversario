@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejador de Jantar de Aniversário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Hearth -->
+    <!-- Application Structure Plan: A single-page application with a sticky navigation bar for easy access to different sections: a welcoming hero, an interactive shopping list, a tabbed recipe section, and a clear timeline. This structure allows the user to logically progress from planning (shopping) to execution (recipes & timeline) in a fluid, non-linear way, enhancing usability for a real-world cooking scenario. -->
+    <!-- Visualization & Content Choices: 
+        - Shopping List -> Interactive Checklist -> Checkboxes -> Most intuitive way to track purchases. A progress bar adds a gamified sense of completion. (HTML/JS)
+        - Recipes -> Tabbed Interface with Checklists -> Tabs for organization, Checkboxes for steps -> Prevents overwhelm by focusing on one recipe at a time, while checklists help track progress during cooking. (HTML/JS)
+        - Timeline -> Vertical Timeline Layout -> Visual Flow -> Easier to parse time-sensitive information compared to a table, guiding the user through the preparation days. (HTML/Tailwind)
+        - Costing -> Summary Card -> Contextual Info -> Placing the total cost within the shopping list provides immediate budgetary context. (HTML/Tailwind)
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdf6e3;
+            color: #586e75;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Lora', serif;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #cb4b16;
+            border-bottom-color: #cb4b16;
+        }
+        .checkbox-label input:checked ~ span {
+            text-decoration: line-through;
+            color: #93a1a1;
+        }
+        .progress-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+        .tab-button.active {
+            background-color: #cb4b16;
+            color: #fdf6e3;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="inicio" class="bg-cover bg-center h-screen flex items-center justify-center text-white" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop');">
+        <div class="text-center p-4">
+            <h1 class="text-5xl md:text-7xl font-bold leading-tight">Jantar de Aniversário</h1>
+            <p class="mt-4 text-xl md:text-2xl font-light">Seu guia completo para uma celebração inesquecível.</p>
+        </div>
+    </header>
+
+    <nav class="sticky top-0 bg-[#fdf6e3] bg-opacity-90 backdrop-blur-sm shadow-md z-50">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-center items-center space-x-4 md:space-x-8 text-lg">
+                <a href="#inicio" class="nav-link px-2 py-1">Início</a>
+                <a href="#compras" class="nav-link px-2 py-1">Lista de Compras</a>
+                <a href="#receitas" class="nav-link px-2 py-1">Receitas</a>
+                <a href="#cronograma" class="nav-link px-2 py-1">Cronograma</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 md:p-12">
+
+        <section id="compras" class="py-16 fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Lista de Compras</h2>
+                <p class="text-center text-lg mb-8">Tudo o que você precisa para um jantar para 10 pessoas.</p>
+
+                <div class="bg-[#eee8d5] rounded-xl p-6 shadow-lg mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Progresso</h3>
+                        <span id="progress-text" class="font-semibold">0 / 20 itens</span>
+                    </div>
+                    <div class="w-full bg-[#fdf6e3] rounded-full h-4">
+                        <div id="progress-bar" class="bg-[#859900] h-4 rounded-full progress-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <p class="text-right mt-4 text-2xl font-bold">Custo Total Estimado: <span class="text-[#cb4b16]">R$ 225,80</span></p>
+                </div>
+
+                <div class="space-y-8" id="shopping-list-container">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-[#cb4b16] pb-2">Açougue e Laticínios</h3>
+                        <div class="space-y-3">
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Peito de Frango (2 kg)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Queijo Muçarela (500 g)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Requeijão Cremoso (2 potes, 400 g)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Creme de Leite (2 caixas, 400 g)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Manteiga sem sal (1 tablete, 200 g)</span>
+                            </label>
+                             <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Manteiga ou Margarina para torta (500 g)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-[#cb4b16] pb-2">Hortifrúti</h3>
+                        <div class="space-y-3">
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Cebola (4 unidades grandes)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Alho (1 cabeça)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Tomate (1.5 kg)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Pimentão Verde (1 unidade grande)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Cebola Roxa (1 unidade média)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Cheiro-Verde (1 maço)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Limão (4 unidades)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Maçã (Gala ou Fuji, 2 kg)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-[#cb4b16] pb-2">Mercearia e Despensa</h3>
+                        <div class="space-y-3">
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Milho Verde (2 latas)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Batata-Palha (2 pacotes, 200 g)</span>
+                            </label>
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Sal e Pimenta-do-Reino</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-[#cb4b16] pb-2">Congelados</h3>
+                        <div class="space-y-3">
+                            <label class="checkbox-label flex items-center p-3 bg-[#eee8d5] rounded-lg hover:bg-opacity-80 transition-all duration-300 cursor-pointer">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4">
+                                <span>Sorvete de Creme (1 pote de 2 L)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="receitas" class="py-16 fade-in">
+            <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Modo de Preparo</h2>
+            <p class="text-center text-lg mb-8">Siga o passo a passo e surpreenda seus convidados.</p>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-4 flex justify-center border-b border-gray-300">
+                    <button class="tab-button active text-lg font-semibold py-2 px-4" onclick="openTab(event, 'fricasse')">Fricassê de Frango</button>
+                    <button class="tab-button text-lg font-semibold py-2 px-4" onclick="openTab(event, 'acompanhamentos')">Acompanhamentos</button>
+                    <button class="tab-button text-lg font-semibold py-2 px-4" onclick="openTab(event, 'torta')">Torta de Maçã</button>
+                </div>
+
+                <div id="fricasse" class="tab-content active">
+                    <div class="bg-[#eee8d5] p-6 rounded-xl shadow-lg">
+                        <h3 class="text-3xl font-bold mb-6">Fricassê de Frango Cremoso</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-xl font-semibold mb-3">Ingredientes</h4>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <li>2 kg de peito de frango</li>
+                                    <li>2 latas de milho verde, escorrido</li>
+                                    <li>2 caixinhas de creme de leite (400 g)</li>
+                                    <li>2 potes de requeijão cremoso (400 g)</li>
+                                    <li>500 g de queijo muçarela</li>
+                                    <li>2 cebolas grandes, picadas</li>
+                                    <li>4 dentes de alho, picados</li>
+                                    <li>2 colheres de sopa de manteiga</li>
+                                    <li>Sal e pimenta-do-reino a gosto</li>
+                                    <li>2 pacotes de batata-palha</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-3">Passo a Passo</h4>
+                                <div class="space-y-3">
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>Cozinhe o frango na pressão com temperos. Desfie e reserve 2 xícaras do caldo.</span>
+                                    </label>
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>No liquidificador, bata o milho, o creme de leite, o requeijão e 1 xícara do caldo de frango até obter um creme homogêneo.</span>
+                                    </label>
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>Em uma panela grande, refogue a cebola e o alho na manteiga.</span>
+                                    </label>
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>Adicione o frango desfiado, tempere com sal e pimenta e salteie.</span>
+                                    </label>
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>Despeje o creme do liquidificador sobre o frango, misture e cozinhe em fogo baixo até engrossar.</span>
+                                    </label>
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>Transfira para um refratário, cubra com a muçarela e leve ao forno pré-aquecido a 200°C por 15-20 minutos para gratinar.</span>
+                                    </label>
+                                    <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                        <span>Cubra com batata-palha na hora de servir.</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="acompanhamentos" class="tab-content">
+                    <div class="bg-[#eee8d5] p-6 rounded-xl shadow-lg space-y-8">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-6">Arroz Branco Soltinho</h3>
+                            <div class="space-y-3">
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Use a proporção de 2.5 xícaras de arroz para 5 xícaras de água fervente.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Refogue alho e/ou cebola, adicione o arroz e "frite" por um minuto para selar os grãos.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Adicione a água fervente e o sal, mexa uma vez e cozinhe em fogo médio com a panela semi-tampada.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Quando a água baixar, reduza o fogo para o mínimo, tampe completamente e cozinhe até secar.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Desligue o fogo e deixe descansar por 5-10 minutos antes de soltar com um garfo.</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold mb-6">Vinagrete Colorido</h3>
+                            <div class="space-y-3">
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Pique em cubos pequenos e uniformes: 1.5 kg de tomate (sem sementes), 1 cebola branca, 1 cebola roxa e 1 pimentão verde.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Adicione cheiro-verde picado a gosto.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Tempere com azeite, suco de limão, sal e uma colher de chá de açúcar para equilibrar a acidez.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Deixe descansar na geladeira por algumas horas para apurar os sabores.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="torta" class="tab-content">
+                    <div class="bg-[#eee8d5] p-6 rounded-xl shadow-lg">
+                        <h3 class="text-3xl font-bold mb-6">Torta de Maçã Caseira</h3>
+                        <div>
+                            <h4 class="text-xl font-semibold mb-3">Ingredientes</h4>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>8-10 maçãs (aprox. 2 kg)</li>
+                                <li>2.5 xícaras de manteiga ou margarina, derretida</li>
+                                <li>4 xícaras de açúcar</li>
+                                <li>4 xícaras de farinha de trigo</li>
+                                <li>1.5 tubinhos de canela em pó</li>
+                                <li>Sorvete de creme para servir</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6">
+                            <h4 class="text-xl font-semibold mb-3">Passo a Passo</h4>
+                            <div class="space-y-3">
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Pré-aqueça o forno a 180°C.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Prepare a farofa: em uma tigela, misture o açúcar, a farinha e a canela. Adicione a manteiga derretida e misture até obter uma textura de areia molhada.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Descasque e fatie as maçãs em lâminas finas.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Em uma forma de fundo removível (28-30 cm), pressione uma camada de farofa no fundo para criar uma base.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Alterne camadas de maçãs fatiadas e farofa, terminando com uma camada de farofa solta por cima.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Asse por 40-45 minutos, ou até a cobertura dourar e as maçãs borbulharem.</span>
+                                </label>
+                                <label class="checkbox-label flex items-start p-3 bg-[#fdf6e3] rounded-lg">
+                                    <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#cb4b16] focus:ring-[#cb4b16] mr-4 mt-1 flex-shrink-0">
+                                    <span>Deixe esfriar um pouco e sirva morna com uma bola de sorvete de creme.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cronograma" class="py-16 fade-in">
+            <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Cronograma de Preparo</h2>
+            <p class="text-center text-lg mb-12">Organize seu tempo para um dia tranquilo e sem estresse.</p>
+            <div class="relative max-w-2xl mx-auto">
+                <div class="border-l-2 border-[#cb4b16] absolute h-full top-0 left-1/2 -ml-px"></div>
+                <div class="space-y-12">
+                    <div class="relative">
+                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                        <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
+                            <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                <h3 class="font-bold text-xl">A Véspera (T-1 Dia)</h3>
+                                <p>Faça as compras. Cozinhe e desfie o frango. Prepare o vinagrete e guarde na geladeira.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                        <div class="mr-auto w-full md:w-1/2 md:pr-8 md:pl-8 text-left">
+                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                <h3 class="font-bold text-xl">Manhã do Evento</h3>
+                                <p>Prepare e asse a torta de maçã. Monte o fricassê (sem o queijo) e refrigere.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                        <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
+                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                <h3 class="font-bold text-xl">Contagem Regressiva (T-2 Horas)</h3>
+                                <p>Arrume a mesa. Retire o fricassê da geladeira.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                        <div class="mr-auto w-full md:w-1/2 md:pr-8 md:pl-8 text-left">
+                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                <h3 class="font-bold text-xl">A Hora H (T-45 Minutos)</h3>
+                                <p>Comece a fazer o arroz. Pré-aqueça o forno e leve o fricassê para gratinar.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="relative">
+                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                        <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
+                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                <h3 class="font-bold text-xl">Chegada dos Convidados</h3>
+                                <p>Finalize os pratos, cubra o fricassê com batata-palha e sirva tudo quente e fresco!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#eee8d5] text-center py-6">
+        <p>Criado com carinho para sua celebração.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const shoppingListContainer = document.getElementById('shopping-list-container');
+            const checkboxes = shoppingListContainer.querySelectorAll('input[type="checkbox"]');
+            const totalItems = checkboxes.length;
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            function updateProgress() {
+                const checkedItems = shoppingListContainer.querySelectorAll('input[type="checkbox"]:checked').length;
+                const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
+                
+                progressBar.style.width = percentage + '%';
+                progressText.textContent = `${checkedItems} / ${totalItems} itens`;
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+
+            updateProgress();
+        });
+
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove('active');
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.className += " active";
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+        
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section, header');
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { rootMargin: "-50% 0px -50% 0px" });
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+    </script>
+
+</body>
+</html>
