@@ -444,7 +444,7 @@
                 <p class="text-center text-lg mb-8">Não sabe o que dar? Deixe a IA te dar uma ideia... inusitada!</p>
                 <div class="text-center">
                     <button id="get-suggestion-btn" class="bg-[#cb4b16] text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-300">
-                        Gerar Sugestão Idiota
+                        Gerar Sugestão
                     </button>
                 </div>
                 <div id="suggestion-result" class="mt-8 text-center bg-[#eee8d5] p-6 rounded-xl min-h-[100px] flex items-center justify-center">
@@ -487,7 +487,7 @@
 
             getSuggestionBtn.addEventListener('click', async () => {
                 suggestionResult.innerHTML = '<div class="loader mx-auto"></div>';
-                const prompt = "Sugira um presente totalmente aleatório e idiota para um amigo. A resposta deve ser apenas o nome do item, curto e simples. Por exemplo: 'Um tijolo limpo e bem embalado' ou 'Uma única pantufa de hotel'.";
+                const prompt = "Sugira um presente totalmente aleatório e idiota para um amigo. A resposta deve ser apenas o nome do item, curto e simples. Por exemplo: 'Um tijolo limpo e bem embalado, martelo, bigorna, makita, pinto de borracha, gnomo esverdeado, 5 gramas de ice, foliculo de um espermatocito, isqueiro rock in roll, gloss da barbie' .";
                 
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
