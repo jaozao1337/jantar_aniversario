@@ -10,12 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Hearth -->
-    <!-- Application Structure Plan: A single-page application with a sticky navigation bar for easy access to different sections: a welcoming hero, an interactive shopping list, a tabbed recipe section, and a clear timeline. This structure allows the user to logically progress from planning (shopping) to execution (recipes & timeline) in a fluid, non-linear way, enhancing usability for a real-world cooking scenario. -->
+    <!-- Application Structure Plan: A single-page application with a sticky navigation bar for easy access to different sections: a welcoming hero, an interactive shopping list, a tabbed recipe section, a clear timeline, and an API-powered gift suggestion feature. This structure allows the user to logically progress from planning to execution in a fluid, non-linear way. -->
     <!-- Visualization & Content Choices: 
         - Shopping List -> Interactive Checklist -> Checkboxes -> Most intuitive way to track purchases. A progress bar adds a gamified sense of completion. (HTML/JS)
-        - Recipes -> Tabbed Interface with Checklists -> Tabs for organization, Checkboxes for steps -> Prevents overwhelm by focusing on one recipe at a time, while checklists help track progress during cooking. (HTML/JS)
-        - Timeline -> Vertical Timeline Layout -> Visual Flow -> Easier to parse time-sensitive information compared to a table, guiding the user through the preparation days. (HTML/Tailwind)
-        - Costing -> Summary Card -> Contextual Info -> Placing the total cost within the shopping list provides immediate budgetary context. (HTML/Tailwind)
+        - Recipes -> Tabbed Interface with Checklists -> Tabs for organization, Checkboxes for steps -> Prevents overwhelm by focusing on one recipe at a time. (HTML/JS)
+        - Timeline -> Vertical Timeline Layout -> Visual Flow -> Easier to parse time-sensitive information. (HTML/Tailwind)
+        - Gift Suggestion -> API Call Button -> Dynamic Content -> An engaging feature that uses the Gemini API to provide humorous, on-demand content. (JS Fetch API)
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -492,7 +492,7 @@
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
-                const apiKey = "AIzaSyB8DEuOcAad3AGQt-Yude4-B83l8ZFayzE";
+                const apiKey = "AIzaSyB8DEuOcAad3AGQt-Yude4-B83l8ZFayzE"; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                 try {
@@ -518,7 +518,11 @@
                     }
                 } catch (error) {
                     console.error("Error fetching suggestion:", error);
-                    suggestionResult.innerHTML = '<p class="text-red-500">Ocorreu um erro ao buscar a sugestão. Verifique o console para mais detalhes.</p>';
+                    let errorMessage = '<p class="text-red-500">Ocorreu um erro ao buscar a sugestão. Verifique o console para mais detalhes.</p>';
+                    if (error instanceof TypeError) { // This often indicates a CORS or network issue
+                        errorMessage = '<p class="text-red-500">Falha na conexão com a API. Se estiver executando este arquivo localmente (fora do ambiente de desenvolvimento), pode ser um erro de CORS.</p>';
+                    }
+                    suggestionResult.innerHTML = errorMessage;
                 }
             });
         });
