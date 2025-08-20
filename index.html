@@ -61,6 +61,18 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #cb4b16;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -79,6 +91,7 @@
                 <a href="#compras" class="nav-link px-2 py-1">Lista de Compras</a>
                 <a href="#receitas" class="nav-link px-2 py-1">Receitas</a>
                 <a href="#cronograma" class="nav-link px-2 py-1">Cronograma</a>
+                <a href="#presentes" class="nav-link px-2 py-1">Presentes</a>
             </div>
         </div>
     </nav>
@@ -425,6 +438,21 @@
             </div>
         </section>
 
+        <section id="presentes" class="py-16 fade-in">
+            <div class="max-w-4xl mx-auto bg-[#fdf6e3] p-8 rounded-xl shadow-2xl">
+                <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Sugestão de Presente para o João</h2>
+                <p class="text-center text-lg mb-8">Não sabe o que dar? Deixe a IA te dar uma ideia... inusitada!</p>
+                <div class="text-center">
+                    <button id="get-suggestion-btn" class="bg-[#cb4b16] text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-300">
+                        Gerar Sugestão Idiota
+                    </button>
+                </div>
+                <div id="suggestion-result" class="mt-8 text-center bg-[#eee8d5] p-6 rounded-xl min-h-[100px] flex items-center justify-center">
+                    <p>Clique no botão para receber uma sugestão de presente!</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="bg-[#eee8d5] text-center py-6">
@@ -453,6 +481,46 @@
             });
 
             updateProgress();
+
+            const getSuggestionBtn = document.getElementById('get-suggestion-btn');
+            const suggestionResult = document.getElementById('suggestion-result');
+
+            getSuggestionBtn.addEventListener('click', async () => {
+                suggestionResult.innerHTML = '<div class="loader mx-auto"></div>';
+                const prompt = "Sugira um presente totalmente aleatório e idiota para um amigo. A resposta deve ser apenas o nome do item, curto e simples. Por exemplo: 'Um tijolo limpo e bem embalado' ou 'Uma única pantufa de hotel'.";
+                
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                       throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        suggestionResult.innerHTML = `<p class="text-2xl font-bold text-[#cb4b16]">${text}</p>`;
+                    } else {
+                       suggestionResult.innerHTML = '<p class="text-red-500">Não foi possível gerar uma sugestão. Tente novamente.</p>';
+                    }
+                } catch (error) {
+                    console.error("Error fetching suggestion:", error);
+                    suggestionResult.innerHTML = '<p class="text-red-500">Ocorreu um erro ao buscar a sugestão. Verifique o console para mais detalhes.</p>';
+                }
+            });
         });
 
         function openTab(evt, tabName) {
