@@ -21,7 +21,10 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #fdf6e3;
+            background-image: url('https://images.unsplash.com/photo-1628585352093-6b51e0d3d6f1?q=80&w=1974&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: #586e75;
         }
         h1, h2, h3, h4 {
@@ -65,10 +68,10 @@
 </head>
 <body class="antialiased">
 
-    <header id="inicio" class="bg-cover bg-center h-screen flex items-center justify-center text-white" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop');">
+    <header id="inicio" class="bg-cover bg-center h-screen flex items-center justify-center text-white" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1604329422952-56989b41195a?q=80&w=1974&auto=format&fit=crop');">
         <div class="text-center p-4">
             <h1 class="text-5xl md:text-7xl font-bold leading-tight">Jantar de Aniversário</h1>
-            <p class="mt-4 text-xl md:text-2xl font-light">Seu guia completo para uma celebração inesquecível.</p>
+            <p class="mt-4 text-xl md:text-2xl font-light">Guia completo jantistico do João.</p>
         </div>
     </header>
 
@@ -86,7 +89,7 @@
     <main class="container mx-auto p-6 md:p-12">
 
         <section id="compras" class="py-16 fade-in">
-            <div class="max-w-4xl mx-auto">
+            <div class="max-w-4xl mx-auto bg-[#fdf6e3] bg-opacity-90 p-8 rounded-xl shadow-2xl">
                 <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Lista de Compras</h2>
                 <p class="text-center text-lg mb-8">Tudo o que você precisa para um jantar para 10 pessoas.</p>
 
@@ -199,10 +202,10 @@
         </section>
 
         <section id="receitas" class="py-16 fade-in">
-            <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Modo de Preparo</h2>
-            <p class="text-center text-lg mb-8">Siga o passo a passo e surpreenda seus convidados.</p>
-            
-            <div class="max-w-4xl mx-auto">
+            <div class="max-w-4xl mx-auto bg-[#fdf6e3] bg-opacity-90 p-8 rounded-xl shadow-2xl">
+                <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Modo de Preparo</h2>
+                <p class="text-center text-lg mb-8">Siga o passo a passo e surpreenda seus convidados.</p>
+                
                 <div class="mb-4 flex justify-center border-b border-gray-300">
                     <button class="tab-button active text-lg font-semibold py-2 px-4" onclick="openTab(event, 'fricasse')">Fricassê de Frango</button>
                     <button class="tab-button text-lg font-semibold py-2 px-4" onclick="openTab(event, 'acompanhamentos')">Acompanhamentos</button>
@@ -369,53 +372,55 @@
         </section>
 
         <section id="cronograma" class="py-16 fade-in">
-            <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Cronograma de Preparo</h2>
-            <p class="text-center text-lg mb-12">Organize seu tempo para um dia tranquilo e sem estresse.</p>
-            <div class="relative max-w-2xl mx-auto">
-                <div class="border-l-2 border-[#cb4b16] absolute h-full top-0 left-1/2 -ml-px"></div>
-                <div class="space-y-12">
-                    <div class="relative">
-                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
-                        <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
-                            <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
-                                <h3 class="font-bold text-xl">A Véspera (T-1 Dia)</h3>
-                                <p>Faça as compras. Cozinhe e desfie o frango. Prepare o vinagrete e guarde na geladeira.</p>
+             <div class="max-w-4xl mx-auto bg-[#fdf6e3] bg-opacity-90 p-8 rounded-xl shadow-2xl">
+                <h2 class="text-4xl font-bold text-center mb-2 text-[#cb4b16]">Cronograma de Preparo</h2>
+                <p class="text-center text-lg mb-12">Organize seu tempo para um dia tranquilo e sem estresse.</p>
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="border-l-2 border-[#cb4b16] absolute h-full top-0 left-1/2 -ml-px"></div>
+                    <div class="space-y-12">
+                        <div class="relative">
+                            <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                            <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
+                                <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                    <h3 class="font-bold text-xl">A Véspera (T-1 Dia)</h3>
+                                    <p>Faça as compras. Cozinhe e desfie o frango. Prepare o vinagrete e guarde na geladeira.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
-                        <div class="mr-auto w-full md:w-1/2 md:pr-8 md:pl-8 text-left">
-                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
-                                <h3 class="font-bold text-xl">Manhã do Evento</h3>
-                                <p>Prepare e asse a torta de maçã. Monte o fricassê (sem o queijo) e refrigere.</p>
+                        <div class="relative">
+                            <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                            <div class="mr-auto w-full md:w-1/2 md:pr-8 md:pl-8 text-left">
+                                 <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                    <h3 class="font-bold text-xl">Manhã do Evento</h3>
+                                    <p>Prepare e asse a torta de maçã. Monte o fricassê (sem o queijo) e refrigere.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
-                        <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
-                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
-                                <h3 class="font-bold text-xl">Contagem Regressiva (T-2 Horas)</h3>
-                                <p>Arrume a mesa. Retire o fricassê da geladeira.</p>
+                        <div class="relative">
+                            <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                            <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
+                                 <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                    <h3 class="font-bold text-xl">Contagem Regressiva (T-2 Horas)</h3>
+                                    <p>Arrume a mesa. Retire o fricassê da geladeira.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
-                        <div class="mr-auto w-full md:w-1/2 md:pr-8 md:pl-8 text-left">
-                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
-                                <h3 class="font-bold text-xl">A Hora H (T-45 Minutos)</h3>
-                                <p>Comece a fazer o arroz. Pré-aqueça o forno e leve o fricassê para gratinar.</p>
+                        <div class="relative">
+                            <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                            <div class="mr-auto w-full md:w-1/2 md:pr-8 md:pl-8 text-left">
+                                 <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                    <h3 class="font-bold text-xl">A Hora H (T-45 Minutos)</h3>
+                                    <p>Comece a fazer o arroz. Pré-aqueça o forno e leve o fricassê para gratinar.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                     <div class="relative">
-                        <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
-                        <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
-                             <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
-                                <h3 class="font-bold text-xl">Chegada dos Convidados</h3>
-                                <p>Finalize os pratos, cubra o fricassê com batata-palha e sirva tudo quente e fresco!</p>
+                         <div class="relative">
+                            <div class="absolute w-4 h-4 bg-[#cb4b16] rounded-full top-0 left-1/2 -ml-2"></div>
+                            <div class="ml-auto w-full md:w-1/2 md:pl-8 md:pr-8 text-left md:text-right">
+                                 <div class="bg-[#eee8d5] p-4 rounded-lg shadow-md">
+                                    <h3 class="font-bold text-xl">Chegada dos Convidados</h3>
+                                    <p>Finalize os pratos, cubra o fricassê com batata-palha e sirva tudo quente e fresco!</p>
+                                </div>
                             </div>
                         </div>
                     </div>
