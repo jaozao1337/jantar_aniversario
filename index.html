@@ -93,6 +93,7 @@
                 <a href="#receitas" class="nav-link px-2 py-1">Receitas</a>
                 <a href="#cronograma" class="nav-link px-2 py-1">Cronograma</a>
                 <a href="#presentes" class="nav-link px-2 py-1">Presentes</a>
+                <a href="#confirmar" class="nav-link px-2 py-1">Confirmo Presença</a>
             </div>
         </div>
     </nav>
@@ -448,6 +449,18 @@
             </div>
         </section>
 
+        <section id="confirmar" class="py-16 fade-in">
+            <div class="max-w-4xl mx-auto bg-[#fdf6e3] p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-2 text-[#cb4b16]">Confirme sua Presença</h2>
+                <p class="text-center text-lg mb-8">Sua presença é o maior presente! Clique abaixo para confirmar via WhatsApp.</p>
+                <div class="text-center">
+                    <a href="https://wa.me/?text=Confirmo%20minha%20presen%C3%A7a%20na%20sua%20janta%20j%C3%A3ozinho%20lindo%20meu%20melhor%20amigo%2C%20beijos" target="_blank" class="inline-block bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-all duration-300">
+                        Confirmar no WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="bg-[#eee8d5] text-center py-6">
@@ -480,7 +493,7 @@
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
-                const apiKey = "AIzaSyB8DEuOcAad3AGQt-Yude4-B83l8ZFayzE"; 
+                const apiKey = ""; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                 try {
